@@ -1,6 +1,12 @@
 #include <iostream>
+#include "Map.h"
+#include <algorithm>
+
+using namespace std;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    Map map(8);
+    fill(begin(map), end(map), 3);
+    map.show();
     return 0;
 }
