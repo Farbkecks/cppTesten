@@ -37,6 +37,8 @@ public:
         Map & map;
     };
 
+    static std::vector<Coordinate> get_neighbours(Iterator const & it);
+
     auto begin() { return Iterator(Coordinate(0,0), *this); }
     auto end()   { return Iterator(Coordinate(scale,scale), *this); } // 200 is out of bounds
 

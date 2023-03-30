@@ -36,6 +36,17 @@ int & Map::getReferance(const Coordinate &coord){
     return map[coord.x][coord.y];
 }
 
+std::vector<Coordinate> Map::get_neighbours(const Map::Iterator &it) {
+    std::vector<Coordinate> out;
+    for(int x = -1; x<2;x++){
+        for(int y = -1; y<2; y++){
+            if(x == 0 && y == 0) continue;
+            out.emplace_back(it.coord.x + x, it.coord.y + y);
+        }
+    }
+    return out;
+}
+
 Map::Iterator &Map::Iterator::operator++() {
     coord.y++;
     if(coord.y == map.scale){

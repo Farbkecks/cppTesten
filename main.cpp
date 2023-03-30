@@ -12,8 +12,12 @@ int main() {
 
     cout << "--------------------------------" << endl;
 
-    for(auto x : map){
-        cout << x << endl;
+    Map::Iterator ptr(Coordinate(1,1), map);
+    cout << *ptr << endl;
+    auto neighbours = Map::get_neighbours(ptr);
+    for(auto i: neighbours){
+        cout << map.getReferance(i) << endl;
     }
+
     return 0;
 }
