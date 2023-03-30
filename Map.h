@@ -2,40 +2,42 @@
 
 #include <vector>
 
+struct Coordinate
+{
+    Coordinate() = delete;
+    Coordinate(int x, int y)
+            : x(x), y(y) {}
+    int x{}, y{};
+};
+
 class Map {
 public:
-    void show() const;
-    void add(int x);
     explicit Map(int x);
+    void show() const;
+    void add(Coordinate const & coord, int value);
+    void add(int x, int y, int value);
 
     struct Iterator{
-        using iterator_category = std::forward_iterator_tag;
-        using difference_type   = std::ptrdiff_t;
-        using value_type        = int;
-        using pointer           = int*;  // or also value_type*
-        using reference         = int&;  // or also value_type&
 
-        Iterator(pointer ptr) : m_ptr(ptr) {}
+        Iterator(std::vector<int>* ptr_x, int* ptr_y, int scale) : ptr_x(ptr_x),ptr_y(ptr_y), scale(scale) {}
 
-        reference operator*() const { return *m_ptr; }
-        pointer operator->() { return m_ptr; }
+        int& operator*() const { return *ptr_y; }
 
         // Prefix increment
-        Iterator& operator++() { m_ptr++; return *this; }
+        Iterator& operator++();
 
-        // Postfix increment
-        Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+        friend bool operator== (const Iterator& a, const Iterator& b) { return (a.ptr_x == b.ptr_x && a.ptr_y == b.ptr_y); };
+        friend bool operator!= (const Iterator& a, const Iterator& b) { return (a.ptr_x != b.ptr_x && a.ptr_y != b.ptr_y); };
 
-        friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
-        friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
-    private:
-
-        pointer m_ptr;
+        std::vector<int>* ptr_x;
+        int* ptr_y;
+        int scale;
     };
 
-    Iterator begin() { return Iterator(&map[0]); }
-    Iterator end()   { return Iterator(&map[map.size()]); } // 200 is out of bounds
-private:
-    std::vector<int> map;
+    auto begin() { return Iterator(&map[0], &map[0][0], scale); }
+    auto end()   { return Iterator(&map[scale],&map[scale][scale], scale); } // 200 is out of bounds
+
+    std::vector<std::vector<int>> map;
+    const int scale;
 };
 
