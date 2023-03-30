@@ -22,7 +22,7 @@ int main() {
     cout << *ptr << endl;
     auto neighbours = Map::get_neighbours(ptr);
     for(auto i: neighbours){
-        cout << map.getReferance(i) << endl;
+        cout << map.getReference(i) << endl;
     }
 
     return 0;

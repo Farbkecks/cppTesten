@@ -14,12 +14,12 @@ void Map::show() const {
     }
 }
 
-void Map::add(int x, int y, int value) {
+void Map::set(int x, int y, int value) {
     map.at(x).at(y) = value;
 }
 
-void Map::add(Coordinate const & coord, int value) {
-    add(coord.x, coord.y, value);
+void Map::set(Coordinate const & coord, int value) {
+    set(coord.x, coord.y, value);
 }
 
 Map::Map(int x) :map(x), scale(x){
@@ -32,16 +32,17 @@ Map::Map(int x) :map(x), scale(x){
     }
 }
 
-int & Map::getReferance(const Coordinate &coord){
+int & Map::getReference(const Coordinate &coord){
     return map[coord.x][coord.y];
 }
 
+// TODO: hier kannst du jetzt auch Iteratoren zurückgeben!
 std::vector<Coordinate> Map::get_neighbours(const Map::Iterator &it) {
     std::vector<Coordinate> out;
     for(int x = -1; x<2;x++){
         for(int y = -1; y<2; y++){
             if(x == 0 && y == 0) continue;
-            out.emplace_back(it.coord.x + x, it.coord.y + y);
+            out.emplace_back(it.getCoordinate().x + x, it.getCoordinate().y + y);
         }
     }
     return out;
@@ -54,4 +55,10 @@ Map::Iterator &Map::Iterator::operator++() {
         coord.y = 0;
     }
     return *this;
+}
+
+Map::Iterator Map::Iterator::operator++(int) {
+    auto temp(*this);
+    ++(*this);
+    return temp;
 }

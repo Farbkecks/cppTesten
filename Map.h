@@ -14,35 +14,37 @@ class Map {
 public:
     explicit Map(int x);
     void show() const;
-    void add(Coordinate const & coord, int value);
-    void add(int x, int y, int value);
-    int & getReferance(Coordinate const & coord);
+    void set(Coordinate const & coord, int value);
+    void set(int x, int y, int value);
+    int & getReference(Coordinate const & coord);
     typedef std::vector<std::vector<int>> datatype;
     datatype map;
     const int scale;
 
     struct Iterator{
-
+    private:
+        Coordinate coord;
+        Map & map;
+    public:
         Iterator(Coordinate coord, Map & map) : coord(coord), map(map) {}
 
-        int& operator*() const { return map.getReferance(coord); }
+        Coordinate getCoordinate() const {return coord; }
+
+        int& operator*() const { return map.getReference(coord); }
 
         // Prefix increment
         Iterator& operator++();
 
-        friend bool operator== (const Iterator& a, const Iterator& b) { return (a.coord.x == b.coord.x && a.coord.y == b.coord.y); };
-        friend bool operator!= (const Iterator& a, const Iterator& b) { return (a.coord.x != b.coord.x && a.coord.y != b.coord.y); };
+        // Suffix operator
+        Iterator operator++(int);
 
-        Coordinate coord;
-        Map & map;
+        bool operator== (const Iterator& other) { return (coord.x == other.coord.x && coord.y == other.coord.y); };
+        bool operator!= (const Iterator& other) { return (coord.x != other.coord.x && coord.y != other.coord.y); };
     };
 
     static std::vector<Coordinate> get_neighbours(Iterator const & it);
 
     auto begin() { return Iterator(Coordinate(0,0), *this); }
     auto end()   { return Iterator(Coordinate(scale,scale), *this); } // 200 is out of bounds
-
-
-
 };
 
