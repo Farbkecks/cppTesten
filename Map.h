@@ -16,28 +16,31 @@ public:
     void show() const;
     void add(Coordinate const & coord, int value);
     void add(int x, int y, int value);
+    int & getReferance(Coordinate const & coord);
+    typedef std::vector<std::vector<int>> datatype;
+    datatype map;
+    const int scale;
 
     struct Iterator{
 
-        Iterator(std::vector<int>* ptr_x, int* ptr_y, int scale) : ptr_x(ptr_x),ptr_y(ptr_y), scale(scale) {}
+        Iterator(Coordinate coord, Map & map) : coord(coord), map(map) {}
 
-        int& operator*() const { return *ptr_y; }
+        int& operator*() const { return map.getReferance(coord); }
 
         // Prefix increment
         Iterator& operator++();
 
-        friend bool operator== (const Iterator& a, const Iterator& b) { return (a.ptr_x == b.ptr_x && a.ptr_y == b.ptr_y); };
-        friend bool operator!= (const Iterator& a, const Iterator& b) { return (a.ptr_x != b.ptr_x && a.ptr_y != b.ptr_y); };
+        friend bool operator== (const Iterator& a, const Iterator& b) { return (a.coord.x == b.coord.x && a.coord.y == b.coord.y); };
+        friend bool operator!= (const Iterator& a, const Iterator& b) { return (a.coord.x != b.coord.x && a.coord.y != b.coord.y); };
 
-        std::vector<int>* ptr_x;
-        int* ptr_y;
-        int scale;
+        Coordinate coord;
+        Map & map;
     };
 
-    auto begin() { return Iterator(&map[0], &map[0][0], scale); }
-    auto end()   { return Iterator(&map[scale],&map[scale][scale], scale); } // 200 is out of bounds
+    auto begin() { return Iterator(Coordinate(0,0), *this); }
+    auto end()   { return Iterator(Coordinate(scale,scale), *this); } // 200 is out of bounds
 
-    std::vector<std::vector<int>> map;
-    const int scale;
+
+
 };
 

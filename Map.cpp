@@ -32,11 +32,15 @@ Map::Map(int x) :map(x), scale(x){
     }
 }
 
+int & Map::getReferance(const Coordinate &coord){
+    return map[coord.x][coord.y];
+}
+
 Map::Iterator &Map::Iterator::operator++() {
-    ptr_y++;
-    if(*ptr_y == (*ptr_x)[scale]){
-        ptr_x++;
-        ptr_y = & (*ptr_x)[0];
+    coord.y++;
+    if(coord.y == map.scale){
+        coord.x++;
+        coord.y = 0;
     }
     return *this;
 }
