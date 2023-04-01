@@ -1,56 +1,62 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include <map>
 
 using namespace std;
 
-enum Types{
+enum TypesEnum{
     HEIGHT,
-    STRENGE,
-    INTELLEGENCE
-};
-
-struct Attributes{
-    virtual Types getT() = 0;
-    virtual double getV() = 0;
-};
-
-template<Types T>
-struct Attribute: public Attributes{
-    Types type;
-    double value;
-    double getV() override{return  value;}
-    Types getT() override{return  type;}
-    explicit Attribute(double x): type(T), value(x){}
+    STRENGTH,
+    INTELLIGENCE
 };
 
 struct Card{
-    Card(double height, double strenge, double intellegence)
+    // Im Konstruktor die einzelnen Properties zu übergeben beißt sich mit der Voraussetzung, alles dynamisch zu halten
+    Card()
     {
-        card.push_back(make_unique<Attribute<HEIGHT>>(height));
-        card.push_back(make_unique<Attribute<STRENGE>>(strenge));
-        card.push_back(make_unique<Attribute<INTELLEGENCE>>(intellegence));
+        // Nicht am Anfang die Werte initialisieren, sondern einfach eine Map nutzen
+
+    }
+    template<TypesEnum T>
+    bool compare(Card const & other) const{
+        return getProperty<T>() > other.getProperty<T>();
     }
 
-    template<Types T>
-    bool compare(Card other) const{
-        for(int i = 0; i<card.size();i++){
-            if(card.at(i)->getT() != T) continue;
-            return card.at(i)->getV() > other.card.at(i)->getV();
-        }
+    template<TypesEnum T>
+    double getProperty() const
+    {
+        if(card.count(T) == 0)
+            return 0.0;
+        return card.at(T);
     }
 
-    vector<shared_ptr<Attributes>> card;
+    template<TypesEnum T>
+    void setProperty(double value)
+    {
+        card[T] = value;
+    }
+
+private:
+    map<TypesEnum, double> card;
 };
 
 int main() {
 
-    Card one(2,3,6);
-    Card two(4,1,8);
+    Card one;
+    one.setProperty<HEIGHT>(3);
+    one.setProperty<STRENGTH>(6);
+    one.setProperty<INTELLIGENCE>(5);
+
+
+    Card two;
+    two.setProperty<HEIGHT>(2);
+    two.setProperty<STRENGTH>(3);
+    two.setProperty<INTELLIGENCE>(8);
 
     cout << one.compare<HEIGHT>(two) << endl;
-    cout << one.compare<STRENGE>(two) << endl;
-    cout << one.compare<INTELLEGENCE>(two) << endl;
+    cout << one.compare<STRENGTH>(two) << endl;
+    cout << one.compare<INTELLIGENCE>(two) << endl;
 
     return 0;
 }
