@@ -9,34 +9,45 @@ enum Types{
     STRENGE
 };
 
-struct Attribute{
+struct Attributes{
+    virtual Types getT() = 0;
+    virtual double getV() = 0;
+};
+
+template<Types T>
+struct Attribute: public Attributes{
     Types type;
     double value;
-    explicit Attribute(Types t, double x): type(t), value(x){}
+    double getV() override{return  value;}
+    Types getT() override{return  type;}
+    explicit Attribute(double x): type(T), value(x){}
 };
 
 struct Card{
-    Card(Attribute height, Attribute strenge){
-        card.push_back(height);
-        card.push_back(strenge);
+    Card(Attribute<HEIGHT> height, Attribute<STRENGE> strenge)
+    {
+        card.push_back(make_unique<Attribute<HEIGHT>>(height));
+        card.push_back(make_unique<Attribute<STRENGE>>(strenge));
     }
-    vector<Attribute> card;
-};
 
-bool compare(Types t, Card one, Card two){
-    for(int i=0; one.card.size(); i++){
-        if(one.card.at(i).type != t) continue;
-        return one.card.at(i).value > two.card.at(i).value;
+    template<Types T>
+    bool compare(Card other) const{
+        for(int i = 0; i<2;i++){
+            if(card.at(i)->getT() != T) continue;
+            return card.at(i)->getV() > other.card.at(i)->getV();
+        }
     }
-}
+
+    vector<shared_ptr<Attributes>> card;
+};
 
 int main() {
 
-    Card one(Attribute(HEIGHT, 2), Attribute(STRENGE, 3));
-    Card two(Attribute(HEIGHT, 1), Attribute(STRENGE, 6));
+    Card one(Attribute<HEIGHT>(2), Attribute<STRENGE>(3));
+    Card two(Attribute<HEIGHT>(1), Attribute<STRENGE>(5));
 
-    cout << compare(HEIGHT, one, two) << endl;
-    cout << compare(STRENGE, one, two) << endl;
+    cout << one.compare<HEIGHT>(two) << endl;
+    cout << one.compare<STRENGE>(two) << endl;
 
     return 0;
 }
