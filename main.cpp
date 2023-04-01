@@ -6,7 +6,8 @@ using namespace std;
 
 enum Types{
     HEIGHT,
-    STRENGE
+    STRENGE,
+    INTELLEGENCE
 };
 
 struct Attributes{
@@ -24,15 +25,16 @@ struct Attribute: public Attributes{
 };
 
 struct Card{
-    Card(double height, double strenge)
+    Card(double height, double strenge, double intellegence)
     {
         card.push_back(make_unique<Attribute<HEIGHT>>(height));
         card.push_back(make_unique<Attribute<STRENGE>>(strenge));
+        card.push_back(make_unique<Attribute<INTELLEGENCE>>(intellegence));
     }
 
     template<Types T>
     bool compare(Card other) const{
-        for(int i = 0; i<2;i++){
+        for(int i = 0; i<card.size();i++){
             if(card.at(i)->getT() != T) continue;
             return card.at(i)->getV() > other.card.at(i)->getV();
         }
@@ -43,11 +45,12 @@ struct Card{
 
 int main() {
 
-    Card one(2,3);
-    Card two(4,1);
+    Card one(2,3,6);
+    Card two(4,1,8);
 
     cout << one.compare<HEIGHT>(two) << endl;
     cout << one.compare<STRENGE>(two) << endl;
+    cout << one.compare<INTELLEGENCE>(two) << endl;
 
     return 0;
 }
