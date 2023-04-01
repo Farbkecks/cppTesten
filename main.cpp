@@ -5,58 +5,72 @@
 
 using namespace std;
 
-enum TypesEnum{
+enum PropertyEnum{
     HEIGHT,
     STRENGTH,
-    INTELLIGENCE
+    INTELLIGENCE,
+    OTHER_PROPERTY
 };
 
-struct Card{
-    // Im Konstruktor die einzelnen Properties zu übergeben beißt sich mit der Voraussetzung, alles dynamisch zu halten
-    Card()
+
+template<PropertyEnum... Properties>
+class Card
+{
+private:
+    map<PropertyEnum, double> card;
+
+    template<PropertyEnum T>
+    void setProperty(double value)
     {
-        // Nicht am Anfang die Werte initialisieren, sondern einfach eine Map nutzen
-
+        card[T] = value;
     }
-    template<TypesEnum T>
-    bool compare(Card const & other) const{
-        return getProperty<T>() > other.getProperty<T>();
-    }
+public:
 
-    template<TypesEnum T>
+    template<PropertyEnum T>
     double getProperty() const
     {
+        static_assert(((Properties == T) ||  ...), "Property does not exist in this Asset");
         if(card.count(T) == 0)
             return 0.0;
         return card.at(T);
     }
 
-    template<TypesEnum T>
-    void setProperty(double value)
+
+    template<typename... Args>
+    Card(Args... args)
     {
-        card[T] = value;
+        static_assert(sizeof...(args) == sizeof...(Properties), "Number of arguments does not match number of properties");
+
+        // initialize properties
+        (setProperty<static_cast<PropertyEnum>(Properties)>(args), ...);
     }
 
-private:
-    map<TypesEnum, double> card;
+    template<PropertyEnum Property>
+    bool compare(Card<Properties...> other)
+    {
+        return getProperty<Property>() > other.getProperty<Property>();
+    }
 };
 
 int main() {
 
-    Card one;
-    one.setProperty<HEIGHT>(3);
-    one.setProperty<STRENGTH>(6);
-    one.setProperty<INTELLIGENCE>(5);
+    typedef Card<HEIGHT, STRENGTH,INTELLIGENCE> HeroCard;
 
 
-    Card two;
-    two.setProperty<HEIGHT>(2);
-    two.setProperty<STRENGTH>(3);
-    two.setProperty<INTELLIGENCE>(8);
+    HeroCard heroOne(1,2,5);
 
-    cout << one.compare<HEIGHT>(two) << endl;
-    cout << one.compare<STRENGTH>(two) << endl;
-    cout << one.compare<INTELLIGENCE>(two) << endl;
+    cout << heroOne.getProperty<STRENGTH>() << std::endl;
 
+    HeroCard heroTwo(2,3,3);
+
+
+    cout << heroOne.compare<HEIGHT>(heroTwo) << endl;
+    cout << heroOne.compare<STRENGTH>(heroTwo) << endl;
+    cout << heroOne.compare<INTELLIGENCE>(heroTwo) << endl;
+
+    Card<HEIGHT, STRENGTH> invalidHero(3,4);
+    // conversion not possible
+    //cout << heroOne.compare<HEIGHT>(invalidHero);
+    //cout << heroOne.compare<OTHER_PROPERTY>(heroTwo);
     return 0;
 }
