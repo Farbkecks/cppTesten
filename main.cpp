@@ -24,7 +24,7 @@ struct Attribute: public Attributes{
 };
 
 struct Card{
-    Card(Attribute<HEIGHT> height, Attribute<STRENGE> strenge)
+    Card(double height, double strenge)
     {
         card.push_back(make_unique<Attribute<HEIGHT>>(height));
         card.push_back(make_unique<Attribute<STRENGE>>(strenge));
@@ -43,8 +43,8 @@ struct Card{
 
 int main() {
 
-    Card one(Attribute<HEIGHT>(2), Attribute<STRENGE>(3));
-    Card two(Attribute<HEIGHT>(1), Attribute<STRENGE>(5));
+    Card one(2,3);
+    Card two(4,1);
 
     cout << one.compare<HEIGHT>(two) << endl;
     cout << one.compare<STRENGE>(two) << endl;
