@@ -11,15 +11,12 @@ enum TypesEnum{
     INTELLIGENCE
 };
 
-struct Card{
-    // Im Konstruktor die einzelnen Properties zu übergeben beißt sich mit der Voraussetzung, alles dynamisch zu halten
-    Card()
-    {
-        // Nicht am Anfang die Werte initialisieren, sondern einfach eine Map nutzen
+struct CardBase{
 
-    }
+    CardBase() = delete;
+
     template<TypesEnum T>
-    bool compare(Card const & other) const{
+    bool compare(CardBase const & other) const{
         return getProperty<T>() > other.getProperty<T>();
     }
 
@@ -37,22 +34,23 @@ struct Card{
         card[T] = value;
     }
 
-private:
+protected:
     map<TypesEnum, double> card;
+};
+
+
+struct Card: public CardBase{
+    Card(double h, double s, double i){
+        setProperty<HEIGHT>(h);
+        setProperty<STRENGTH>(s);
+        setProperty<INTELLIGENCE>(i);
+    }
 };
 
 int main() {
 
-    Card one;
-    one.setProperty<HEIGHT>(3);
-    one.setProperty<STRENGTH>(6);
-    one.setProperty<INTELLIGENCE>(5);
-
-
-    Card two;
-    two.setProperty<HEIGHT>(2);
-    two.setProperty<STRENGTH>(3);
-    two.setProperty<INTELLIGENCE>(8);
+    Card one(1,5,3);
+    Card two(5,2,9);
 
     cout << one.compare<HEIGHT>(two) << endl;
     cout << one.compare<STRENGTH>(two) << endl;
