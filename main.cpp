@@ -11,10 +11,10 @@ enum TypesEnum{
     INTELLIGENCE
 };
 
-struct CardBase{
-
-    CardBase() = delete;
-
+class CardBase{
+protected:
+    CardBase() = default;
+public:
     template<TypesEnum T>
     bool compare(CardBase const & other) const{
         return getProperty<T>() > other.getProperty<T>();
