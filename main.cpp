@@ -42,7 +42,6 @@ int
 main(int argc, char *argv[])
 {
 
-    //Test
     std::vector<int> x = {1,2};
     print_container(x);
 
